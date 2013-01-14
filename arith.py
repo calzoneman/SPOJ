@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 
 import re
+import sys
 
 def unzeroify(result):
     linelen = len(result)
+    result = result.lstrip(' ')
     result = result.lstrip('0')
     if result == '':
         result = '0'
@@ -74,6 +76,45 @@ def sub(lhs, rhs):
     print('-' * linelen)
     print(result)
 
+def mul(lhs, rhs):
+    mult_passes = len(rhs)
+    lhs, rhs, top, bottom = initial_pass(lhs, rhs, '*')
+    linelen = len(rhs)
+    results = [ ['0'] * linelen for i in range(mult_passes) ]
+    for i in range(mult_passes):
+        carry = [0] * linelen
+        for j in range(linelen-1, -1, -1):
+            p = top[j] * bottom[linelen - i - 1] + carry[j]
+            if p >= 10:
+                if j - 1 < 0:
+                    results[i].insert(0, str(int(p / 10)))
+                    results[i][j + 1] = str(p % 10)
+                else:
+                    carry[j - 1] = int(p / 10)
+                    results[i][j] = str(p % 10)
+            else:
+                results[i][j] = str(p % 10)
+
+
+    grand_total = sum([int(''.join(results[i])) * 10 ** i for i in range(len(results))])
+    linelen += mult_passes - 1
+    if len(results[0]) <= len(rhs.lstrip().lstrip('*')):
+        linelen -= 1
+    lhs = lhs.lstrip().rjust(linelen, ' ')
+    rhs = rhs.lstrip().rjust(linelen, ' ')
+    for i in range(mult_passes):
+        results[i] = unzeroify(''.join(results[i]).rjust(linelen-i, ' '))
+    if results[mult_passes - 1][0] == ' ':
+        results[mult_passes - 1] = results[mult_passes - 1][1:]
+    print(lhs)
+    print(rhs)
+    print(('-' * len(rhs.lstrip())).rjust(linelen, ' '))
+    for i in range(mult_passes):
+        print(results[i])
+    if mult_passes > 1:
+        print('-' * linelen)
+        print(grand_total)
+
 
 if __name__ == "__main__":
     TESTCASE_REGEX = re.compile("([0-9]+)([\\+\\-\\*])([0-9]+)")
@@ -90,3 +131,5 @@ if __name__ == "__main__":
             add(lhs, rhs)
         elif oper == '-':
             sub(lhs, rhs)
+        elif oper == '*':
+            mul(lhs, rhs)
