@@ -17,8 +17,29 @@ def addsub(lhs, rhs, oper):
     print(s.rjust(linelen, ' '))
 
 def mul(lhs, rhs):
-    pass
+    a = int(lhs)
+    bdigits = [int(d) for d in rhs]
+    subproducts = [''] * len(rhs)
 
+    for i in range(len(subproducts)):
+        subproducts[len(subproducts)-i-1] = str(bdigits[i] * a)
+
+    product = str(a * int(rhs))
+    # URGH 81 chars.  Screw it
+    linelen = max([i + len(subproducts[i]) for i in range(len(subproducts))])
+    linelen = max(linelen, len(product))
+
+    rhs = '*' + rhs
+    print(lhs.rjust(linelen, ' '))
+    print(rhs.rjust(linelen, ' '))
+    print(('-' * max(len(rhs), len(subproducts[0]))).rjust(linelen, ' '))
+    if len(subproducts) > 1:
+        i = 0
+        for sub in subproducts:
+            print(sub.rjust(linelen - i))
+            i += 1
+        print('-' * linelen)
+    print(product.rjust(linelen, ' '))
 
 if __name__ == "__main__":
     TESTCASE_REGEX = re.compile("([0-9]+)([\\+\\-\\*])([0-9]+)")

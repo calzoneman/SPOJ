@@ -8,3 +8,4 @@ Problems Completed:
 - #2 (PRIME1) : prime1.c
 - #4 (ONP) : onp.py
 - #5 (PALIN) : palin.c
+- #6 (ARITH) : arith.py
