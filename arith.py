@@ -3,117 +3,21 @@
 import re
 import sys
 
-def unzeroify(result):
-    linelen = len(result)
-    result = result.lstrip(' ')
-    result = result.lstrip('0')
-    if result == '':
-        result = '0'
-    return result.rjust(linelen, ' ')
-
-def initial_pass(lhs, rhs, oper=''):
+def addsub(lhs, rhs, oper):
+    if oper == '+':
+        s = str(int(lhs) + int(rhs))
+    elif oper == '-':
+        s = str(int(lhs) - int(rhs))
     rhs = oper + rhs
-    linelen = max(len(lhs), len(rhs))
-    lhs = lhs.rjust(linelen, ' ')
-    rhs = rhs.rjust(linelen, ' ')
-    # Convert each digit to a number
-    top = [0] * linelen
-    bottom = [0] * linelen
-    for i in range(0, linelen):
-        if lhs[i] != ' ':
-            top[i] = int(lhs[i])
-        if rhs[i] != ' ' and rhs[i] != oper:
-            bottom[i] = int(rhs[i])
-    return lhs, rhs, top, bottom
+    linelen = max(len(rhs), len(s))
 
-def add(lhs, rhs):
-    lhs, rhs, top, bottom = initial_pass(lhs, rhs, '+')
-    linelen = len(rhs)
-    result = ['0'] * linelen
-    for i in range(linelen-1, -1, -1):
-        c = top[i] + bottom[i]
-        if c > 9:
-            if i > 0:
-                top[i - 1] += 1
-            if i - 1 < 0:
-                result.insert(0, '1')
-                linelen += 1
-                lhs = lhs.rjust(linelen, ' ')
-                rhs = rhs.rjust(linelen, ' ')
-                result[i + 1] = str(c - 10)
-            else:
-                result[i] = str(c - 10)
-        else:
-            result[i] = str(c)
-
-    result = unzeroify(''.join(result))
-
-    print(lhs)
-    print(rhs)
+    print(lhs.rjust(linelen, ' '))
+    print(rhs.rjust(linelen, ' '))
     print('-' * linelen)
-    print(''.join(result))
-
-def sub(lhs, rhs):
-    lhs, rhs, top, bottom = initial_pass(lhs, rhs, '-')
-    linelen = len(rhs)
-    result = ['0'] * linelen
-    for i in range(linelen-1, -1, -1):
-        if lhs[i] == ' ' and rhs[i] == '-':
-            break
-        c = top[i] - bottom[i]
-        if c < 0:
-            if i - 1 > 0:
-                top[i - 1] -= 1
-            else:
-                print("Invalid test case, rhs < lhs for subtraction")
-            c += 10
-        result[i] = str(c)
-
-    result = unzeroify(''.join(result))
-
-    print(lhs)
-    print(rhs)
-    print('-' * linelen)
-    print(result)
+    print(s.rjust(linelen, ' '))
 
 def mul(lhs, rhs):
-    mult_passes = len(rhs)
-    lhs, rhs, top, bottom = initial_pass(lhs, rhs, '*')
-    linelen = len(rhs)
-    results = [ ['0'] * linelen for i in range(mult_passes) ]
-    for i in range(mult_passes):
-        carry = [0] * linelen
-        for j in range(linelen-1, -1, -1):
-            p = top[j] * bottom[linelen - i - 1] + carry[j]
-            if p >= 10:
-                if j - 1 < 0:
-                    results[i].insert(0, str(int(p / 10)))
-                    results[i][j + 1] = str(p % 10)
-                else:
-                    carry[j - 1] = int(p / 10)
-                    results[i][j] = str(p % 10)
-            else:
-                results[i][j] = str(p % 10)
-
-
-    grand_total = sum([int(''.join(results[i])) * 10 ** i for i in range(len(results))])
-    linelen += mult_passes - 1
-    if len(results[0]) <= len(rhs.lstrip().lstrip('*')):
-        linelen -= 1
-    lhs = lhs.lstrip().rjust(linelen, ' ')
-    rhs = rhs.lstrip().rjust(linelen, ' ')
-    for i in range(mult_passes):
-        results[i] = unzeroify(''.join(results[i]).rjust(linelen-i, ' '))
-    if results[mult_passes - 1][0] == ' ':
-        results[mult_passes - 1] = results[mult_passes - 1][1:]
-    print(lhs)
-    print(rhs)
-    print(('-' * len(rhs.lstrip())).rjust(linelen, ' '))
-    for i in range(mult_passes):
-        print(results[i])
-    if mult_passes > 1:
-        print('-' * linelen)
-        print(grand_total)
+    pass
 
 
 if __name__ == "__main__":
@@ -127,9 +31,7 @@ if __name__ == "__main__":
         lhs = match.group(1)
         oper = match.group(2)
         rhs = match.group(3)
-        if oper == '+':
-            add(lhs, rhs)
-        elif oper == '-':
-            sub(lhs, rhs)
+        if oper == '+' or oper == '-':
+            addsub(lhs, rhs, oper)
         elif oper == '*':
             mul(lhs, rhs)
