@@ -10,3 +10,4 @@ Problems Completed:
 - #5 (PALIN) : palin.c
 - #6 (ARITH) : arith.py
 - #17 (CRYPTO1) : crypto1.py
+- #18 (CRYPTO2) : crypto2.bf
